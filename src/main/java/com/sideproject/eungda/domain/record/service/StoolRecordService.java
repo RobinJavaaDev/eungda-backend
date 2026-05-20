@@ -6,6 +6,8 @@ import com.sideproject.eungda.domain.record.dto.StoolRecordResponseDto;
 import com.sideproject.eungda.domain.record.entity.StoolRecord;
 import com.sideproject.eungda.domain.record.repository.StoolRecordRepository;
 import com.sideproject.eungda.domain.stool.dto.StoolSummaryResponseDto;
+import com.sideproject.eungda.enums.StoolColor;
+import com.sideproject.eungda.enums.StoolShape;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,26 +49,20 @@ public class StoolRecordService {
                 .map(StoolRecordResponseDto::from)
                 .toList();
     }
-    // 맨 위에 import java.time.LocalDateTime; 추가 확인!
 
     public StoolSummaryResponseDto getWeeklySummary(Long memberId) {
-        // 1. 회원 존재 여부 검증 (아까 만든 방어 로직)
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        // 2. 최근 7일 기간 설정
         LocalDateTime endDate = LocalDateTime.now();
         LocalDateTime startDate = endDate.minusDays(7);
 
-        // 3. 최근 7일 기록 DB에서 싹 가져오기
         List<StoolRecord> records = stoolRecordRepository.findByMemberIdAndRecordedAtBetween(memberId, startDate, endDate);
 
-        // 4. 통계 계산 (Java Stream 활용)
         long totalCount = records.size();
-        long goldCount = records.stream().filter(r -> "황금".equals(r.getColor())).count();
-        long bananaCount = records.stream().filter(r -> "바나나".equals(r.getShape())).count();
+        long goldCount = records.stream().filter(r -> r.getColor() == StoolColor.BROWN).count();
+        long bananaCount = records.stream().filter(r -> r.getShape() == StoolShape.SMOOTH_SAUSAGE).count();
 
-        // 5. 예쁘게 포장해서 반환
         return StoolSummaryResponseDto.builder()
                 .totalCount(totalCount)
                 .goldCount(goldCount)

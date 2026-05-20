@@ -1,15 +1,19 @@
 package com.sideproject.eungda.domain.record.entity;
 
-import java.time.LocalDateTime;
-
+import com.sideproject.eungda.enums.StoolColor;
+import com.sideproject.eungda.enums.StoolShape;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,17 +27,19 @@ public class StoolRecord {
     @Column(nullable = false)
     private Long memberId;
 
-    @Column(nullable = false)
-    private String color;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private StoolColor color;
 
-    @Column(nullable = false)
-    private String shape;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private StoolShape shape;
 
     @Column(nullable = false)
     private LocalDateTime recordedAt;
 
     @Builder
-    public StoolRecord(Long memberId, String color, String shape, LocalDateTime recordedAt) {
+    public StoolRecord(Long memberId, StoolColor color, StoolShape shape, LocalDateTime recordedAt) {
         this.memberId = memberId;
         this.color = color;
         this.shape = shape;
